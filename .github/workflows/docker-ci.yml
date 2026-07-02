@@ -2,26 +2,37 @@ name: Docker CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   docker-build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: ✅ Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Build Docker Compose images
-        run: docker compose build
+      - name: 🐳 Verify Docker
+        run: |
+          docker --version
+          docker compose version
 
-      - name: Start containers
+      - name: 🔨 Build Backend Image
+        run: docker compose build backend
+
+      - name: 🔨 Build Frontend Image
+        run: docker compose build frontend
+
+      - name: 🚀 Start Containers
         run: docker compose up -d
 
-      - name: Check running containers
+      - name: 📦 List Running Containers
         run: docker ps
 
-      - name: Stop containers
+      - name: 🧹 Stop Containers
+        if: always()
         run: docker compose down
